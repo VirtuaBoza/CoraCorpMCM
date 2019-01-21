@@ -1,9 +1,11 @@
+using System.Linq;
 using System.Threading.Tasks;
 using CoraCorpMCM.App.Account.Entities;
 using CoraCorpMCM.App.Account.Interfaces.Repositories;
 using CoraCorpMCM.App.Account.Interfaces.Services;
 using CoraCorpMCM.App.Account.Services.Models;
 using CoraCorpMCM.App.Shared.Entities;
+using CoraCorpMCM.App.Shared.Services.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace CoraCorpMCM.App.Account.Services
@@ -21,7 +23,7 @@ namespace CoraCorpMCM.App.Account.Services
       this.userManager = userManager;
     }
 
-    public async Task<IdentityResult> RegisterMuseumAsync(MuseumRegistrationModel model)
+    public async Task<ServiceResult> RegisterMuseumAsync(MuseumRegistrationModel model)
     {
       var museum = new Museum
       {
@@ -37,7 +39,14 @@ namespace CoraCorpMCM.App.Account.Services
         Museum = museum,
       };
 
-      return await userManager.CreateAsync(user, model.Password);
+      var identityResult = await userManager.CreateAsync(user, model.Password);
+      if (identityResult.Succeeded)
+      {
+        return ServiceResult.Success;
+      }
+
+      var serviceErrors = identityResult.Errors.Select(error => new ServiceError { Code = error.Code, Description = error.Description });
+      return ServiceResult.Failed(serviceErrors.ToArray());
     }
   }
 }

@@ -10,7 +10,7 @@ export default class Auth {
   isAuthenticated = () => {
     const token = this.retrieveToken();
     if (!token) return false;
-    const { exp } = jwtDecode(token);
-    return new Date().getTime() < exp;
+    const { exp, email_confirmed } = jwtDecode(token);
+    return new Date().getTime() < exp && email_confirmed;
   };
 }

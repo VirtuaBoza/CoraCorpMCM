@@ -1,4 +1,9 @@
 import React, { Component } from 'react';
+import Isemail from 'isemail';
+
+import FormTextInput from '../Shared/FormTextInput';
+
+import register from '../../services/registrationService';
 
 class RegisterPage extends Component {
   constructor(props) {
@@ -10,72 +15,177 @@ class RegisterPage extends Component {
         username: '',
         email: '',
         password: '',
+        confirmPassword: '',
       },
-      response: null,
+      formErrors: {
+        museumName: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      },
+      errors: [],
       processing: false,
     };
   }
 
   handleInputChanged = e => {
-    this.setState({
-      ...this.state,
-      registrationModel: {
-        ...this.state.registrationModel,
-        [e.target.name]: e.target.value,
-      },
-    });
+    const { name, value } = e.target;
+
+    const registrationModel = {
+      ...this.state.registrationModel,
+      [name]: value,
+    };
+
+    const formErrors = this.validateField(e);
+
+    this.setState({ registrationModel, formErrors });
+  };
+
+  validateField = e => {
+    const { name, value, required } = e.target;
+    const { registrationModel, formErrors } = this.state;
+
+    if (required && /^ *$/.test(value)) {
+      return {
+        ...formErrors,
+        [name]: 'This field is required.',
+      };
+    } else {
+      switch (name) {
+        case 'email':
+          return {
+            ...formErrors,
+            email: Isemail.validate(value)
+              ? ''
+              : 'Please enter a valid email address.',
+          };
+        case 'password':
+          return {
+            ...formErrors,
+            password:
+              value.length < 6
+                ? 'Password must be at least 6 characters.'
+                : value.length > 100
+                ? 'Password cannot be more than 100 characters.'
+                : '',
+            confirmPassword:
+              registrationModel.confirmPassword.length > 0 &&
+              value !== registrationModel.confirmPassword
+                ? 'Password fields must match.'
+                : '',
+          };
+        case 'confirmPassword':
+          return {
+            ...formErrors,
+            confirmPassword:
+              value !== registrationModel.password
+                ? 'Password fields must match.'
+                : '',
+          };
+        default:
+          return { ...formErrors };
+      }
+    }
   };
 
   handleSubmitClicked = e => {
     e.preventDefault();
-    this.setState({ ...this.state, processing: true });
+    this.setState({ processing: true });
+    register(this.state.registrationModel)
+      .then(() => {
+        this.setState({ processing: false });
+      })
+      .catch(errors => {
+        if (Array.isArray(errors)) {
+          this.setState({ errors });
+        }
+        this.setState({ processing: false });
+      });
+  };
+
+  formIsValid = () => {
+    const { formErrors, registrationModel } = this.state;
+    const noFormErrors = Object.getOwnPropertyNames(formErrors).every(
+      objProp => this.state.formErrors[objProp] === '',
+    );
+    const requiredFieldsArePopulated = [
+      registrationModel.museumName,
+      registrationModel.username,
+      registrationModel.email,
+      registrationModel.password,
+      registrationModel.confirmPassword,
+    ].every(value => {
+      return !/^ *$/.test(value);
+    });
+    return noFormErrors && requiredFieldsArePopulated;
   };
 
   render() {
-    const { registrationModel } = this.state;
+    const { registrationModel, formErrors, errors } = this.state;
 
     return (
-      <>
-        <form>
-          <input
-            name="museumName"
-            value={registrationModel.museumName}
-            onChange={this.handleInputChanged}
-            placeholder="Museum Name"
-            type="text"
-          />
-          <input
-            name="username"
-            value={registrationModel.username}
-            onChange={this.handleInputChanged}
-            placeholder="Username"
-            type="text"
-          />
-          <input
-            name="email"
-            value={registrationModel.email}
-            onChange={this.handleInputChanged}
-            placeholder="Email"
-            type="email"
-          />
-          <input
-            name="password"
-            onChange={this.handleInputChanged}
-            value={registrationModel.password}
-            placeholder="Password"
-            type="password"
-          />
+      <form>
+        <FormTextInput
+          name="museumName"
+          value={registrationModel.museumName}
+          onChange={this.handleInputChanged}
+          label="Museum Name"
+          type="text"
+          validationText={formErrors.museumName}
+          required
+        />
+        <FormTextInput
+          name="username"
+          value={registrationModel.username}
+          onChange={this.handleInputChanged}
+          label="Your Name"
+          type="text"
+          validationText={formErrors.username}
+          required
+        />
+        <FormTextInput
+          name="email"
+          value={registrationModel.email}
+          onChange={this.handleInputChanged}
+          label="Email"
+          type="email"
+          validationText={formErrors.email}
+          required
+        />
+        <FormTextInput
+          name="password"
+          onChange={this.handleInputChanged}
+          value={registrationModel.password}
+          label="Password"
+          type="password"
+          validationText={formErrors.password}
+          required
+        />
+        <FormTextInput
+          name="confirmPassword"
+          onChange={this.handleInputChanged}
+          value={registrationModel.confirmPassword}
+          label="Confirm Password"
+          type="password"
+          validationText={formErrors.confirmPassword}
+          required
+        />
+        <div>
           <input
             type="submit"
             value="Submit"
             onClick={this.handleSubmitClicked}
+            disabled={!this.formIsValid()}
           />
-          {this.state.processing && 'Processing...'}
-        </form>
-        <div>
-          {this.state.response && JSON.stringify(this.state.response, null, 2)}
         </div>
-      </>
+        <div>{this.state.processing && 'Processing...'}</div>
+        <ul>
+          {errors.map((error, i) => (
+            <li key={i}>{error.description}</li>
+          ))}
+        </ul>
+      </form>
     );
   }
 }

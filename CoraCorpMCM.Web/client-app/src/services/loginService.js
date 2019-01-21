@@ -1,4 +1,4 @@
-import Auth from '../Auth';
+import Auth from '../utilities/Auth';
 import { post } from '../utilities/httpRequests';
 
 const login = ({ email, password }) => {

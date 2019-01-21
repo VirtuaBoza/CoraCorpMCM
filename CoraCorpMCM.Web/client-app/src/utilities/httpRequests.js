@@ -1,15 +1,19 @@
-import Auth from '../Auth';
+import Auth from './Auth';
 
 const handleResponse = async response => {
   if (response.ok) return response.json();
-  const contentType = response.headers.get('content-type');
+  // const contentType = response.headers.get('content-type');
   let failedResponse;
   try {
-    if (contentType && contentType.indexOf('application/json') !== -1) {
+    // if (contentType && contentType.indexOf('application/json') !== -1) {
+    //   failedResponse = await response.json();
+    // } else {
+    try {
       failedResponse = await response.json();
-    } else {
+    } catch {
       failedResponse = await response.text();
     }
+    // }
   } catch (error) {
     console.error(error);
   }

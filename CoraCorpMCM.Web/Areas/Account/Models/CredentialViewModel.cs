@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CoraCorpMCM.Web.Areas.Account.ViewModels
+namespace CoraCorpMCM.Web.Areas.Account.Models
 {
   public class CredentialViewModel
   {

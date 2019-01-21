@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CoraCorpMCM.App.Account.Entities;
-using CoraCorpMCM.Web.Areas.Account.ViewModels;
+using CoraCorpMCM.Web.Areas.Account.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -57,10 +57,12 @@ namespace CoraCorpMCM.Web.Areas.Account.Controllers
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
         new Claim(JwtRegisteredClaimNames.Email, user.Email),
-        new Claim("museumId", user.MuseumId.ToString()),
+        new Claim("museum_id", user.MuseumId.ToString()),
       };
       var roles = await userManager.GetRolesAsync(user);
       claims.AddRange(roles.Select(claim => new Claim("roles", claim)));
+      var emailConfirmed = await userManager.IsEmailConfirmedAsync(user);
+      claims.Add(new Claim("email_confirmed", emailConfirmed.ToString()));
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Tokens:Identity:Key"]));
       var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -4,8 +4,10 @@ using CoraCorpMCM.App.Account.Interfaces.Repositories;
 using CoraCorpMCM.App.Account.Interfaces.Services;
 using CoraCorpMCM.App.Account.Services;
 using CoraCorpMCM.App.Collection.Interfaces.Repositories;
+using CoraCorpMCM.App.Shared.Interfaces.Services;
 using CoraCorpMCM.Data;
 using CoraCorpMCM.Data.Repositories;
+using CoraCorpMCM.Services.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,7 +37,15 @@ namespace CoraCorpMCM.Web
       services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(
           Configuration.GetConnectionString("Default")));
-      services.AddIdentity<ApplicationUser, IdentityRole>()
+      services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        {
+          options.Password.RequireDigit = false;
+          options.Password.RequireLowercase = false;
+          options.Password.RequireNonAlphanumeric = false;
+          options.Password.RequireUppercase = false;
+          options.Password.RequiredUniqueChars = 0;
+          options.User.RequireUniqueEmail = true;
+        })
         .AddEntityFrameworkStores<ApplicationDbContext>();
 
       services.AddAuthentication(options =>
@@ -60,9 +70,17 @@ namespace CoraCorpMCM.Web
           }
         });
 
+      services.AddAuthorization(config =>
+      {
+        config.AddPolicy("EmailConfirmed", p => p.RequireClaim("email_confirmed", true.ToString()));
+      });
+
       services.AddScoped<IItemRepository, ItemRepository>();
       services.AddScoped<IMuseumRepository, MuseumRepository>();
       services.AddScoped<IMuseumRegistrationService, MuseumRegistrationService>();
+      services.AddTransient<IEmailConfirmationService, EmailConfirmationService>();
+      services.AddSingleton<IEmailSender, EmailSender>();
+      services.Configure<AuthMessageSenderOptions>(Configuration);
 
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 

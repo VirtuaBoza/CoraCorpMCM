@@ -9,7 +9,7 @@ namespace CoraCorpMCM.Web.Areas.Collection.Controllers
   [Area("Collection")]
   [Route("api/[area]/[controller]")]
   [ApiController]
-  [Authorize]
+  [Authorize(Policy = "EmailConfirmed")]
   public class ItemController : ControllerBase
   {
     private readonly IItemRepository itemRepository;
