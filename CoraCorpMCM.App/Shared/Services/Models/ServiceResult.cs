@@ -3,6 +3,16 @@ using System.Linq;
 
 namespace CoraCorpMCM.App.Shared.Services.Models
 {
+  public class ServiceResult<T> : ServiceResult
+  {
+    public new static ServiceResult<T> Success(T result)
+    {
+      return new ServiceResult<T> { Succeeded = true, Result = result };
+    }
+
+    public T Result { get; protected set; }
+  }
+
   /// <summary>
   /// Represents the result of an operation.
   /// </summary>

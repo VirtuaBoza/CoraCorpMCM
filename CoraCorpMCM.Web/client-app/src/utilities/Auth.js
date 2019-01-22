@@ -10,7 +10,17 @@ export default class Auth {
   isAuthenticated = () => {
     const token = this.retrieveToken();
     if (!token) return false;
+
     const { exp, email_confirmed } = jwtDecode(token);
-    return new Date().getTime() < exp && email_confirmed;
+    if (!exp || !email_confirmed) return false;
+
+    const currentTime = new Date().getTime();
+    const tokenIsCurrent = currentTime < exp * 1000;
+    const emailIsConfirmed = email_confirmed.toLowerCase() === 'true';
+    return tokenIsCurrent && emailIsConfirmed;
+  };
+
+  logout = () => {
+    localStorage.removeItem('id_token');
   };
 }

@@ -14,13 +14,16 @@ namespace CoraCorpMCM.App.Account.Services
   {
     private readonly IMuseumRepository museumRepository;
     private readonly UserManager<ApplicationUser> userManager;
+    private readonly IEmailConfirmationService emailConfirmationService;
 
     public MuseumRegistrationService(
       IMuseumRepository museumRepository,
-      UserManager<ApplicationUser> userManager)
+      UserManager<ApplicationUser> userManager,
+      IEmailConfirmationService emailConfirmationService)
     {
       this.museumRepository = museumRepository;
       this.userManager = userManager;
+      this.emailConfirmationService = emailConfirmationService;
     }
 
     public async Task<ServiceResult> RegisterMuseumAsync(MuseumRegistrationModel model)
@@ -42,7 +45,8 @@ namespace CoraCorpMCM.App.Account.Services
       var identityResult = await userManager.CreateAsync(user, model.Password);
       if (identityResult.Succeeded)
       {
-        return ServiceResult.Success;
+        await emailConfirmationService.SendConfirmationEmailAsync(user, "");
+        return ServiceResult<ApplicationUser>.Success(user);
       }
 
       var serviceErrors = identityResult.Errors.Select(error => new ServiceError { Code = error.Code, Description = error.Description });

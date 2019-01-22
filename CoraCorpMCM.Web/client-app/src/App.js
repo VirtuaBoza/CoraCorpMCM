@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import Auth from './utilities/Auth';
 
@@ -11,6 +11,7 @@ import LoginPage from './components/Login/LoginPage';
 import CollectionPage from './components/Collection/CollectionPage';
 import RegisterPage from './components/Register/RegisterPage';
 import UnauthorizedPage from './components/Unauthorized/UnauthorizedPage';
+import EmailConfirmedPage from './components/EmailConfirmedPage';
 
 class App extends Component {
   constructor(props) {
@@ -25,11 +26,14 @@ class App extends Component {
     return (
       <AuthContext.Provider value={auth}>
         <Nav />
-        <Route exact path="/" component={HomePage} />
-        <Route path="/register" component={RegisterPage} />
-        <Route path="/login" component={LoginPage} />
-        <Route path="/collection" component={CollectionPage} />
-        <Route path="/unauthorized" component={UnauthorizedPage} />
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/register" component={RegisterPage} />
+          <Route path="/login" component={LoginPage} />
+          <Route path="/collection" component={CollectionPage} />
+          <Route path="/unauthorized" component={UnauthorizedPage} />
+          <Route path="/emailConfirmed" component={EmailConfirmedPage} />
+        </Switch>
       </AuthContext.Provider>
     );
   }

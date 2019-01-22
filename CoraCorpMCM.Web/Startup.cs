@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,7 +47,13 @@ namespace CoraCorpMCM.Web
           options.Password.RequiredUniqueChars = 0;
           options.User.RequireUniqueEmail = true;
         })
-        .AddEntityFrameworkStores<ApplicationDbContext>();
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
+
+      services.Configure<IdentityOptions>(options =>
+      {
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ '";
+      });
 
       services.AddAuthentication(options =>
         {
@@ -78,6 +85,7 @@ namespace CoraCorpMCM.Web
       services.AddScoped<IItemRepository, ItemRepository>();
       services.AddScoped<IMuseumRepository, MuseumRepository>();
       services.AddScoped<IMuseumRegistrationService, MuseumRegistrationService>();
+      services.AddScoped<IIdentityTokenService, IdentityTokenService>();
       services.AddTransient<IEmailConfirmationService, EmailConfirmationService>();
       services.AddSingleton<IEmailSender, EmailSender>();
       services.Configure<AuthMessageSenderOptions>(Configuration);
@@ -110,15 +118,22 @@ namespace CoraCorpMCM.Web
 
       app.UseAuthentication();
 
-      app.UseMvc();
+      app.UseMvc(routes =>
+      {
+        routes.MapRoute(
+          "confirmEmail",
+          "Account/Registration/ConfirmEmail",
+          defaults : new { area = "Account", controller = "Registration", action = "ConfirmEmail" });
+      });
 
       app.UseSpa(spa =>
       {
-        spa.Options.SourcePath = "ClientApp";
+        spa.Options.SourcePath = "client-app";
 
         if (env.IsDevelopment())
         {
           spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+          // spa.UseReactDevelopmentServer(npmScript: "start");
         }
       });
     }

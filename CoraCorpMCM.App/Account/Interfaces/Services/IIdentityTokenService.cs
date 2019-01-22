@@ -3,8 +3,8 @@ using CoraCorpMCM.App.Account.Entities;
 
 namespace CoraCorpMCM.App.Account.Interfaces.Services
 {
-  public interface IEmailConfirmationService
+  public interface IIdentityTokenService
   {
-    Task SendConfirmationEmailAsync(ApplicationUser user, string callbackUrl);
+    Task<string> CreateTokenAsync(ApplicationUser user);
   }
 }

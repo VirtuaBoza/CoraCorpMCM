@@ -1,14 +1,23 @@
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using CoraCorpMCM.App.Account.Entities;
 using CoraCorpMCM.App.Account.Interfaces.Services;
+using CoraCorpMCM.App.Shared.Interfaces.Services;
 
 namespace CoraCorpMCM.App.Account.Services
 {
   public class EmailConfirmationService : IEmailConfirmationService
   {
-    public Task SendConfirmationEmailAsync(ApplicationUser user, string callbackRoute)
+    private readonly IEmailSender emailSender;
+    public EmailConfirmationService(IEmailSender emailSender)
     {
-      throw new System.NotImplementedException();
+      this.emailSender = emailSender;
+
+    }
+    public async Task SendConfirmationEmailAsync(ApplicationUser user, string callbackUrl)
+    {
+      await emailSender.SendEmailAsync(user.Email, "Confirm your email",
+        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
     }
   }
 }
