@@ -1,11 +1,8 @@
-import Auth from '../utilities/Auth';
-import { post } from '../utilities/httpRequests';
+import Http from '../utilities/Http';
 
 const login = ({ email, password }) => {
-  const auth = new Auth();
-  return post('/api/account/authentication', { email, password }).then(json => {
-    auth.storeToken(json.token);
-  });
+  const http = new Http();
+  return http.post('/api/account/authentication', { email, password });
 };
 
 export default login;

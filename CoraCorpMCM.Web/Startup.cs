@@ -46,14 +46,10 @@ namespace CoraCorpMCM.Web
           options.Password.RequireUppercase = false;
           options.Password.RequiredUniqueChars = 0;
           options.User.RequireUniqueEmail = true;
+          options.User.AllowedUserNameCharacters = null;
         })
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
-
-      services.Configure<IdentityOptions>(options =>
-      {
-        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ '";
-      });
 
       services.AddAuthentication(options =>
         {
@@ -79,7 +75,7 @@ namespace CoraCorpMCM.Web
 
       services.AddAuthorization(config =>
       {
-        config.AddPolicy("EmailConfirmed", p => p.RequireClaim("email_confirmed", true.ToString()));
+        config.AddPolicy("EmailConfirmed", p => p.RequireClaim("email_verified", true.ToString()));
       });
 
       services.AddScoped<IItemRepository, ItemRepository>();

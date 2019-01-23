@@ -19,5 +19,10 @@ namespace CoraCorpMCM.Data.Repositories
       await context.SaveChangesAsync();
       return entity;
     }
+
+    public async Task<T> GetByIdAsync(TId id)
+    {
+      return await context.Set<T>().FindAsync(id);
+    }
   }
 }

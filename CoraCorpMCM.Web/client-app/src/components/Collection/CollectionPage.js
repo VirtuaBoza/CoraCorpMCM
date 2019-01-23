@@ -7,7 +7,7 @@ class CollectionPage extends Component {
   };
 
   componentDidMount() {
-    getItems().then(items => this.setState({ items }));
+    getItems(this.props.auth).then(items => this.setState({ items }));
   }
 
   render() {

@@ -26,6 +26,7 @@ class RegisterPage extends Component {
       },
       errors: [],
       processing: false,
+      complete: false,
     };
   }
 
@@ -94,7 +95,7 @@ class RegisterPage extends Component {
     this.setState({ processing: true });
     register(this.state.registrationModel)
       .then(() => {
-        this.setState({ processing: false });
+        this.setState({ processing: false, complete: true });
       })
       .catch(errors => {
         if (Array.isArray(errors)) {
@@ -122,70 +123,80 @@ class RegisterPage extends Component {
   };
 
   render() {
-    const { registrationModel, formErrors, errors } = this.state;
+    const { registrationModel, formErrors, errors, complete } = this.state;
+
+    if (!complete) {
+      return (
+        <form>
+          <FormTextInput
+            name="museumName"
+            value={registrationModel.museumName}
+            onChange={this.handleInputChanged}
+            label="Museum Name"
+            type="text"
+            validationText={formErrors.museumName}
+            required
+          />
+          <FormTextInput
+            name="username"
+            value={registrationModel.username}
+            onChange={this.handleInputChanged}
+            label="Your Name"
+            type="text"
+            validationText={formErrors.username}
+            required
+          />
+          <FormTextInput
+            name="email"
+            value={registrationModel.email}
+            onChange={this.handleInputChanged}
+            label="Email"
+            type="email"
+            validationText={formErrors.email}
+            required
+          />
+          <FormTextInput
+            name="password"
+            onChange={this.handleInputChanged}
+            value={registrationModel.password}
+            label="Password"
+            type="password"
+            validationText={formErrors.password}
+            required
+          />
+          <FormTextInput
+            name="confirmPassword"
+            onChange={this.handleInputChanged}
+            value={registrationModel.confirmPassword}
+            label="Confirm Password"
+            type="password"
+            validationText={formErrors.confirmPassword}
+            required
+          />
+          <div>
+            <input
+              type="submit"
+              value="Submit"
+              onClick={this.handleSubmitClicked}
+              disabled={!this.formIsValid()}
+            />
+          </div>
+          <div>{this.state.processing && 'Processing...'}</div>
+          <ul>
+            {errors.map((error, i) => (
+              <li key={i}>{error.description}</li>
+            ))}
+          </ul>
+        </form>
+      );
+    }
 
     return (
-      <form>
-        <FormTextInput
-          name="museumName"
-          value={registrationModel.museumName}
-          onChange={this.handleInputChanged}
-          label="Museum Name"
-          type="text"
-          validationText={formErrors.museumName}
-          required
-        />
-        <FormTextInput
-          name="username"
-          value={registrationModel.username}
-          onChange={this.handleInputChanged}
-          label="Your Name"
-          type="text"
-          validationText={formErrors.username}
-          required
-        />
-        <FormTextInput
-          name="email"
-          value={registrationModel.email}
-          onChange={this.handleInputChanged}
-          label="Email"
-          type="email"
-          validationText={formErrors.email}
-          required
-        />
-        <FormTextInput
-          name="password"
-          onChange={this.handleInputChanged}
-          value={registrationModel.password}
-          label="Password"
-          type="password"
-          validationText={formErrors.password}
-          required
-        />
-        <FormTextInput
-          name="confirmPassword"
-          onChange={this.handleInputChanged}
-          value={registrationModel.confirmPassword}
-          label="Confirm Password"
-          type="password"
-          validationText={formErrors.confirmPassword}
-          required
-        />
-        <div>
-          <input
-            type="submit"
-            value="Submit"
-            onClick={this.handleSubmitClicked}
-            disabled={!this.formIsValid()}
-          />
-        </div>
-        <div>{this.state.processing && 'Processing...'}</div>
-        <ul>
-          {errors.map((error, i) => (
-            <li key={i}>{error.description}</li>
-          ))}
-        </ul>
-      </form>
+      <div>
+        Thank you for registering. You should receive an account verification
+        email soon. Your email must be verified before you can begin using the
+        system.
+      </div>
     );
   }
 }

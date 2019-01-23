@@ -1,4 +1,9 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+import Isemail from 'isemail';
+
+import FormTextInput from '../Shared/FormTextInput';
+
 import login from '../../services/loginService';
 
 class LoginPage extends Component {
@@ -10,51 +15,97 @@ class LoginPage extends Component {
         email: '',
         password: '',
       },
+      formErrors: {
+        email: '',
+        password: '',
+      },
       errors: [],
+      processing: false,
     };
   }
 
   handleInputChanged = e => {
-    this.setState({
-      ...this.state,
-      credentials: {
-        ...this.state.credentials,
-        [e.target.name]: e.target.value,
-      },
-    });
+    const { name, value } = e.target;
+
+    const credentials = {
+      ...this.state.credentials,
+      [name]: value,
+    };
+
+    const formErrors = this.validateField(e);
+
+    this.setState({ credentials, formErrors });
+  };
+
+  validateField = e => {
+    const { name, value, required } = e.target;
+    const { formErrors } = this.state;
+
+    if (required && /^ *$/.test(value)) {
+      return {
+        ...formErrors,
+        [name]: 'This field is required.',
+      };
+    } else {
+      switch (name) {
+        case 'email':
+          return {
+            ...formErrors,
+            email: Isemail.validate(value)
+              ? ''
+              : 'Please enter a valid email address.',
+          };
+        default:
+          return { ...formErrors };
+      }
+    }
   };
 
   handleSubmitClicked = e => {
     e.preventDefault();
-    this.setState({ ...this.state, errors: [] });
+    this.setState({ processing: true });
 
-    login(this.state.credentials)
-      .then(res => {
-        console.log(res);
+    const { credentials } = this.state;
+    const { auth, location, history } = this.props;
+
+    login(credentials)
+      .then(json => {
+        auth.storeToken(json.token);
+        if (location.state && location.state.referrer) {
+          history.push(this.props.location.state.referrer);
+        } else {
+          history.push('/');
+        }
       })
       .catch(err => {
-        console.log(err);
+        this.setState({ processing: false });
+        console.error(err);
       });
   };
 
   render() {
-    const { credentials } = this.state;
+    if (this.props.auth.isAuthenticated()) return <Redirect to="/" />;
+    const { credentials, formErrors } = this.state;
     return (
       <>
         <form>
-          <input
+          <FormTextInput
             name="email"
             value={credentials.email}
             onChange={this.handleInputChanged}
-            placeholder="email"
+            label="Email"
             type="email"
+            validationText={formErrors.email}
+            required
           />
-          <input
+          <FormTextInput
             name="password"
             value={credentials.password}
             onChange={this.handleInputChanged}
-            placeholder="password"
+            label="Password"
             type="password"
+            validationText={formErrors.email}
+            required
           />
           <input
             type="submit"

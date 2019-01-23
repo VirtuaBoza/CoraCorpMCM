@@ -1,4 +1,4 @@
-import { post } from '../utilities/httpRequests';
+import Http from '../utilities/Http';
 
 const register = ({
   museumName,
@@ -7,17 +7,17 @@ const register = ({
   password,
   confirmPassword,
 }) => {
-  return post('/api/account/registration', {
-    museumName,
-    username,
-    email,
-    password,
-    confirmPassword,
-  })
-    .then(stuff => {
-      console.log(stuff);
+  const http = new Http();
+  return http
+    .post('/api/account/registration', {
+      museumName,
+      username,
+      email,
+      password,
+      confirmPassword,
     })
     .catch(err => {
+      console.error(err);
       throw err.errors;
     });
 };

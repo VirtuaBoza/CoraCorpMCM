@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 
 import AuthContext from '../AuthContext';
 
-const Nav = () => {
+const Nav = props => {
   const { isAuthenticated, logout } = useContext(AuthContext);
+  const { history } = props;
   return (
     <nav>
       <ul>
@@ -12,19 +13,18 @@ const Nav = () => {
           <NavLink to="/">Home</NavLink>
         </li>
         {isAuthenticated() ? (
-          <>
-            <li>
-              <NavLink to="/collection">Collection</NavLink>
-            </li>
-            <li>
-              <button onClick={logout}>Logout</button>
-            </li>
-          </>
+          <li>
+            <button
+              onClick={() => {
+                logout();
+                history.push('/');
+              }}
+            >
+              Logout
+            </button>
+          </li>
         ) : (
           <>
-            <li>
-              <NavLink to="/register">Register New Museum</NavLink>
-            </li>
             <li>
               <NavLink to="/login">Login</NavLink>
             </li>
@@ -35,4 +35,4 @@ const Nav = () => {
   );
 };
 
-export default Nav;
+export default withRouter(Nav);

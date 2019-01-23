@@ -1,7 +1,8 @@
-import { get } from '../utilities/httpRequests';
+import Http from '../utilities/Http';
 
-const getItems = () => {
-  return get('/api/collection/item').catch(() => {
+const getItems = auth => {
+  const http = new Http(auth);
+  return http.get('/api/collection/item').catch(() => {
     return [];
   });
 };
