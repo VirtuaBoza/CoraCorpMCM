@@ -86,6 +86,8 @@ namespace CoraCorpMCM.Web
       services.AddSingleton<IEmailSender, EmailSender>();
       services.Configure<AuthMessageSenderOptions>(Configuration);
 
+      services.AddTransient<DbInitializer>();
+
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
       // In production, the React files will be served from this directory
@@ -96,7 +98,7 @@ namespace CoraCorpMCM.Web
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, DbInitializer dbInitializer)
     {
       if (env.IsDevelopment())
       {
@@ -132,6 +134,12 @@ namespace CoraCorpMCM.Web
           // spa.UseReactDevelopmentServer(npmScript: "start");
         }
       });
+
+      dbInitializer.Initialize().Wait();
+      if (env.IsDevelopment())
+      {
+        dbInitializer.Seed().Wait();
+      }
     }
   }
 }

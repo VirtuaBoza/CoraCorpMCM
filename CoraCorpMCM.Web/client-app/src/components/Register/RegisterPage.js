@@ -1,68 +1,98 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Isemail from 'isemail';
 
-import FormTextInput from '../Shared/FormTextInput';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 import register from '../../services/registrationService';
 
-class RegisterPage extends Component {
-  constructor(props) {
-    super(props);
+const styles = theme => ({
+  formContainer: {
+    marginTop: theme.spacing.unit * 8,
+    marginBottom: theme.spacing.unit * 2,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+      .spacing.unit * 3}px`,
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+      width: 400,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+  },
+  form: {
+    marginTop: theme.spacing.unit,
+    width: '100%',
+  },
+  submit: {
+    marginTop: theme.spacing.unit * 3,
+  },
+});
 
-    this.state = {
-      registrationModel: {
-        museumName: '',
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-      },
-      formErrors: {
-        museumName: '',
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-      },
-      errors: [],
-      processing: false,
-      complete: false,
-    };
-  }
+const RegisterPage = ({ classes }) => {
+  const [registrationModel, setRegistrationModel] = useState({
+    museumName: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [formErrors, setFormErrors] = useState({
+    museumName: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [errors, setErrors] = useState([]);
+  const [processing, setProcessing] = useState(false);
+  const [complete, setComplete] = useState(false);
 
-  handleInputChanged = e => {
+  if (complete)
+    return (
+      <div>
+        Thank you for registering. You should receive an account verification
+        email soon. Your email must be verified before you can begin using the
+        system.
+      </div>
+    );
+
+  const handleInputChanged = e => {
     const { name, value } = e.target;
 
-    const registrationModel = {
-      ...this.state.registrationModel,
+    setRegistrationModel({
+      ...registrationModel,
       [name]: value,
-    };
+    });
 
-    const formErrors = this.validateField(e);
-
-    this.setState({ registrationModel, formErrors });
+    validateField(e);
   };
 
-  validateField = e => {
+  const validateField = e => {
     const { name, value, required } = e.target;
-    const { registrationModel, formErrors } = this.state;
-
-    if (required && /^ *$/.test(value)) {
-      return {
+    if (required) {
+      setFormErrors({
         ...formErrors,
-        [name]: 'This field is required.',
-      };
+        [name]: /^ *$/.test(value) ? 'This field is required.' : '',
+      });
     } else {
       switch (name) {
         case 'email':
-          return {
+          setFormErrors({
             ...formErrors,
             email: Isemail.validate(value)
               ? ''
               : 'Please enter a valid email address.',
-          };
+          });
+          break;
         case 'password':
-          return {
+          setFormErrors({
             ...formErrors,
             password:
               value.length < 6
@@ -75,40 +105,41 @@ class RegisterPage extends Component {
               value !== registrationModel.confirmPassword
                 ? 'Password fields must match.'
                 : '',
-          };
+          });
+          break;
         case 'confirmPassword':
-          return {
+          setFormErrors({
             ...formErrors,
             confirmPassword:
               value !== registrationModel.password
                 ? 'Password fields must match.'
                 : '',
-          };
+          });
+          break;
         default:
-          return { ...formErrors };
       }
     }
   };
 
-  handleSubmitClicked = e => {
+  const handleSubmitClicked = e => {
     e.preventDefault();
-    this.setState({ processing: true });
-    register(this.state.registrationModel)
+    setProcessing(true);
+    register(registrationModel)
       .then(() => {
-        this.setState({ processing: false, complete: true });
+        setProcessing(false);
+        setComplete(true);
       })
       .catch(errors => {
         if (Array.isArray(errors)) {
-          this.setState({ errors });
+          setErrors({ errors });
         }
-        this.setState({ processing: false });
+        setProcessing(false);
       });
   };
 
-  formIsValid = () => {
-    const { formErrors, registrationModel } = this.state;
+  const formIsValid = () => {
     const noFormErrors = Object.getOwnPropertyNames(formErrors).every(
-      objProp => this.state.formErrors[objProp] === '',
+      objProp => formErrors[objProp] === '',
     );
     const requiredFieldsArePopulated = [
       registrationModel.museumName,
@@ -122,83 +153,106 @@ class RegisterPage extends Component {
     return noFormErrors && requiredFieldsArePopulated;
   };
 
-  render() {
-    const { registrationModel, formErrors, errors, complete } = this.state;
+  return (
+    <Paper className={classes.formContainer}>
+      <Typography component="h1" variant="h5">
+        Register
+      </Typography>
+      <form className={classes.form}>
+        <TextField
+          name="museumName"
+          value={registrationModel.museumName}
+          onChange={handleInputChanged}
+          onBlur={validateField}
+          label="Museum Name"
+          helperText={formErrors.museumName}
+          error={Boolean(formErrors.museumName)}
+          margin="normal"
+          autoComplete="organization"
+          variant="outlined"
+          autoFocus
+          fullWidth
+          required
+        />
+        <TextField
+          name="username"
+          value={registrationModel.username}
+          onChange={handleInputChanged}
+          onBlur={validateField}
+          label="Your Name"
+          helperText={formErrors.username}
+          error={Boolean(formErrors.username)}
+          margin="normal"
+          autoComplete="name"
+          variant="outlined"
+          fullWidth
+          required
+        />
+        <TextField
+          name="email"
+          value={registrationModel.email}
+          onChange={handleInputChanged}
+          onBlur={validateField}
+          label="Email"
+          type="email"
+          helperText={formErrors.email}
+          error={Boolean(formErrors.email)}
+          margin="normal"
+          autoComplete="work email"
+          variant="outlined"
+          fullWidth
+          required
+        />
+        <TextField
+          name="password"
+          onChange={handleInputChanged}
+          onBlur={validateField}
+          value={registrationModel.password}
+          label="Password"
+          type="password"
+          helperText={formErrors.password}
+          error={Boolean(formErrors.password)}
+          margin="normal"
+          autoComplete="new-password"
+          variant="outlined"
+          fullWidth
+          required
+        />
+        <TextField
+          name="confirmPassword"
+          onChange={handleInputChanged}
+          onBlur={validateField}
+          value={registrationModel.confirmPassword}
+          label="Confirm Password"
+          type="password"
+          helperText={formErrors.confirmPassword}
+          error={Boolean(formErrors.confirmPassword)}
+          margin="normal"
+          autoComplete="new-password"
+          variant="outlined"
+          fullWidth
+          required
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+          onClick={handleSubmitClicked}
+          disabled={!formIsValid()}
+          fullWidth
+        >
+          Register
+        </Button>
+        <div>{processing && 'Processing...'}</div>
+        <ul>
+          {errors.map((error, i) => (
+            <li key={i}>{error.description}</li>
+          ))}
+        </ul>
+      </form>
+    </Paper>
+  );
+};
 
-    if (!complete) {
-      return (
-        <form>
-          <FormTextInput
-            name="museumName"
-            value={registrationModel.museumName}
-            onChange={this.handleInputChanged}
-            label="Museum Name"
-            type="text"
-            validationText={formErrors.museumName}
-            required
-          />
-          <FormTextInput
-            name="username"
-            value={registrationModel.username}
-            onChange={this.handleInputChanged}
-            label="Your Name"
-            type="text"
-            validationText={formErrors.username}
-            required
-          />
-          <FormTextInput
-            name="email"
-            value={registrationModel.email}
-            onChange={this.handleInputChanged}
-            label="Email"
-            type="email"
-            validationText={formErrors.email}
-            required
-          />
-          <FormTextInput
-            name="password"
-            onChange={this.handleInputChanged}
-            value={registrationModel.password}
-            label="Password"
-            type="password"
-            validationText={formErrors.password}
-            required
-          />
-          <FormTextInput
-            name="confirmPassword"
-            onChange={this.handleInputChanged}
-            value={registrationModel.confirmPassword}
-            label="Confirm Password"
-            type="password"
-            validationText={formErrors.confirmPassword}
-            required
-          />
-          <div>
-            <input
-              type="submit"
-              value="Submit"
-              onClick={this.handleSubmitClicked}
-              disabled={!this.formIsValid()}
-            />
-          </div>
-          <div>{this.state.processing && 'Processing...'}</div>
-          <ul>
-            {errors.map((error, i) => (
-              <li key={i}>{error.description}</li>
-            ))}
-          </ul>
-        </form>
-      );
-    }
-
-    return (
-      <div>
-        Thank you for registering. You should receive an account verification
-        email soon. Your email must be verified before you can begin using the
-        system.
-      </div>
-    );
-  }
-}
-
-export default RegisterPage;
+export default withStyles(styles)(RegisterPage);

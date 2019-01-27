@@ -12,5 +12,14 @@ namespace CoraCorpMCM.Data
 
     public DbSet<Item> Items { get; set; }
     public DbSet<Museum> Museums { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      base.OnModelCreating(modelBuilder);
+
+      modelBuilder.Entity<Item>()
+        .Property(i => i.Title)
+        .IsRequired();
+    }
   }
 }

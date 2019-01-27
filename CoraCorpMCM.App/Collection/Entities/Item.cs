@@ -7,6 +7,7 @@ namespace CoraCorpMCM.App.Collection.Entities
   public class Item : IMuseumEntity<Guid>
   {
     public Guid Id { get; set; }
+    public string Title { get; set; }
     public Guid MuseumId { get; set; }
     public Museum Museum { get; set; }
   }

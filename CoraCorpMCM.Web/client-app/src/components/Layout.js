@@ -2,9 +2,9 @@ import React from 'react';
 
 const Layout = ({ nav, children }) => {
   return (
-    <div>
-      <div>{nav}</div>
-      <div>{children}</div>
+    <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      {nav}
+      {children}
     </div>
   );
 };
