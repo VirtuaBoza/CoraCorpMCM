@@ -35,8 +35,8 @@ export default class Auth {
     const token = this.getIdToken();
     if (!token) return null;
     const { name, email, museum_name: museumName } = jwtDecode(token);
-    this.profile = { name, email, museumName };
-    return { ...this.profile };
+    this.userProfile = { name, email, museumName };
+    return { ...this.userProfile };
   };
 
   userInRole = role => {

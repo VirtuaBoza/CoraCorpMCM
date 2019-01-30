@@ -9,7 +9,7 @@ import AuthContext from './AuthContext';
 
 import Layout from './components/Layout';
 import TopNav from './components/TopNav';
-import HomePage from './components/Home/HomePage';
+import WelcomePage from './components/Index/WelcomePage';
 import CollectionPage from './components/Collection/CollectionPage';
 import UnauthorizedPage from './components/Unauthorized/UnauthorizedPage';
 import EmailConfirmedPage from './components/EmailConfirmedPage';
@@ -67,7 +67,7 @@ class App extends Component {
                       auth.isAuthenticated() ? (
                         <DashboardPage {...props} />
                       ) : (
-                        <HomePage />
+                        <WelcomePage />
                       )
                     }
                   />
