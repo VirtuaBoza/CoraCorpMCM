@@ -5,4 +5,5 @@ export default {
   UNAUTHORIZED: '/unauthorized',
   COLLECTION: '/collection',
   EMAIL_CONFIRMED: '/emailConfirmed',
+  FORGOT_PASSWORD: '/forgotPassword',
 };

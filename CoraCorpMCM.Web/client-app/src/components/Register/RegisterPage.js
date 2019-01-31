@@ -165,7 +165,7 @@ const RegisterPage = ({ classes }) => {
           onChange={handleInputChanged}
           onBlur={validateField}
           label="Museum Name"
-          helperText={formErrors.museumName}
+          helperText={formErrors.museumName || ' '}
           error={Boolean(formErrors.museumName)}
           margin="normal"
           autoComplete="organization"
@@ -180,7 +180,7 @@ const RegisterPage = ({ classes }) => {
           onChange={handleInputChanged}
           onBlur={validateField}
           label="Your Name"
-          helperText={formErrors.username}
+          helperText={formErrors.username || ' '}
           error={Boolean(formErrors.username)}
           margin="normal"
           autoComplete="name"
@@ -195,7 +195,7 @@ const RegisterPage = ({ classes }) => {
           onBlur={validateField}
           label="Email"
           type="email"
-          helperText={formErrors.email}
+          helperText={formErrors.email || ' '}
           error={Boolean(formErrors.email)}
           margin="normal"
           autoComplete="work email"
@@ -210,7 +210,7 @@ const RegisterPage = ({ classes }) => {
           value={registrationModel.password}
           label="Password"
           type="password"
-          helperText={formErrors.password}
+          helperText={formErrors.password || ' '}
           error={Boolean(formErrors.password)}
           margin="normal"
           autoComplete="new-password"
@@ -225,7 +225,7 @@ const RegisterPage = ({ classes }) => {
           value={registrationModel.confirmPassword}
           label="Confirm Password"
           type="password"
-          helperText={formErrors.confirmPassword}
+          helperText={formErrors.confirmPassword || ' '}
           error={Boolean(formErrors.confirmPassword)}
           margin="normal"
           autoComplete="new-password"

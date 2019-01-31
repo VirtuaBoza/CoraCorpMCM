@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 
 import Isemail from 'isemail';
 
+import ROUTES from '../../constants/routeConstants';
 import AuthContext from '../../AuthContext';
 import login from '../../services/loginService';
 
@@ -42,11 +43,14 @@ const styles = theme => ({
   submit: {
     marginTop: theme.spacing.unit * 3,
   },
+  forgotPasswordButton: {
+    marginTop: theme.spacing.unit * 2,
+  },
 });
 
 const LoginPage = ({ location, history, classes }) => {
   const auth = useContext(AuthContext);
-  if (auth.isAuthenticated()) return <Redirect to="/" />;
+  if (auth.isAuthenticated()) return <Redirect to={ROUTES.HOME} />;
 
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [formErrors, setFormErrors] = useState({ email: '', password: '' });
@@ -61,6 +65,24 @@ const LoginPage = ({ location, history, classes }) => {
     });
 
     validateField(e);
+  };
+
+  const handleSubmitClicked = e => {
+    e.preventDefault();
+    setLoginFailed(false);
+    login(credentials)
+      .then(json => {
+        auth.storeToken(json.token);
+        if (location.state && location.state.referrer) {
+          history.push(location.state.referrer);
+        } else {
+          history.push(ROUTES.HOME);
+        }
+      })
+      .catch(err => {
+        setLoginFailed(true);
+        console.error(err);
+      });
   };
 
   const validateField = e => {
@@ -84,24 +106,6 @@ const LoginPage = ({ location, history, classes }) => {
         default:
       }
     }
-  };
-
-  const handleSubmitClicked = e => {
-    e.preventDefault();
-    setLoginFailed(false);
-    login(credentials)
-      .then(json => {
-        auth.storeToken(json.token);
-        if (location.state && location.state.referrer) {
-          history.push(location.state.referrer);
-        } else {
-          history.push('/');
-        }
-      })
-      .catch(err => {
-        setLoginFailed(true);
-        console.error(err);
-      });
   };
 
   const formIsValid = () => {
@@ -133,7 +137,7 @@ const LoginPage = ({ location, history, classes }) => {
           value={credentials.email}
           onChange={handleInputChanged}
           onBlur={validateField}
-          helperText={formErrors.email}
+          helperText={formErrors.email || ' '}
           error={Boolean(formErrors.email)}
           margin="normal"
           autoComplete="work email"
@@ -149,7 +153,7 @@ const LoginPage = ({ location, history, classes }) => {
           value={credentials.password}
           onChange={handleInputChanged}
           onBlur={validateField}
-          helperText={formErrors.password}
+          helperText={formErrors.password || ' '}
           error={Boolean(formErrors.password)}
           margin="normal"
           autoComplete="current-password"
@@ -157,7 +161,10 @@ const LoginPage = ({ location, history, classes }) => {
           fullWidth
           required
         />
-        {loginFailed && 'Invalid login attempt.'}
+
+        {loginFailed && (
+          <Typography color="error">Invalid credentials.</Typography>
+        )}
         <Button
           type="submit"
           variant="contained"
@@ -170,6 +177,15 @@ const LoginPage = ({ location, history, classes }) => {
           Sign in
         </Button>
       </form>
+      <Button
+        variant="text"
+        size="small"
+        color="primary"
+        onClick={() => history.push(ROUTES.FORGOT_PASSWORD)}
+        className={classes.forgotPasswordButton}
+      >
+        Forgot Password
+      </Button>
     </Paper>
   );
 };

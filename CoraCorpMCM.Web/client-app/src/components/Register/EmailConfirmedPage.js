@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Redirect } from 'react-router-dom';
-import AuthContext from '../AuthContext';
+import AuthContext from '../../AuthContext';
 
 const EmailConfirmedPage = props => {
   const auth = useContext(AuthContext);

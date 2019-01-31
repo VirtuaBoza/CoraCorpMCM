@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -40,7 +39,7 @@ const WelcomePage = ({ classes, history }) => {
           CoraCorp MCM
         </Typography>
         <Typography variant="h6" align="center" color="textSecondary" paragraph>
-          CoraCorp MCM is a free, open source web application for managing art
+          CoraCorp MCM is a free, open-source web application for managing art
           collections. Anyone can register a museum and invite other
           administrators to join your account to help manage your collection.
         </Typography>
@@ -59,4 +58,4 @@ const WelcomePage = ({ classes, history }) => {
   );
 };
 
-export default withStyles(styles)(withRouter(WelcomePage));
+export default withStyles(styles)(WelcomePage);

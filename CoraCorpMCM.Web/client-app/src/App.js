@@ -6,15 +6,17 @@ import Auth from './utilities/Auth';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 
 import AuthContext from './AuthContext';
+import ROUTES from './constants/routeConstants';
 
 import Layout from './components/Layout';
 import TopNav from './components/TopNav';
 import WelcomePage from './components/Index/WelcomePage';
 import CollectionPage from './components/Collection/CollectionPage';
 import UnauthorizedPage from './components/Unauthorized/UnauthorizedPage';
-import EmailConfirmedPage from './components/EmailConfirmedPage';
-import PrivateRoute from './components/PrivateRoute';
-import Loading from './components/Loading';
+import EmailConfirmedPage from './components/Register/EmailConfirmedPage';
+import PrivateRoute from './PrivateRoute';
+import Loading from './components/Shared/Loading';
+import ForgotPasswordPage from './components/Login/ForgotPasswordPage';
 
 const LoginPage = lazy(() => import('./components/Login/LoginPage'));
 const RegisterPage = lazy(() => import('./components/Register/RegisterPage'));
@@ -62,29 +64,39 @@ class App extends Component {
                 <Switch>
                   <Route
                     exact
-                    path="/"
+                    path={ROUTES.HOME}
                     render={props =>
                       auth.isAuthenticated() ? (
                         <DashboardPage {...props} />
                       ) : (
-                        <WelcomePage />
+                        <WelcomePage {...props} />
                       )
                     }
                   />
                   <Route
-                    path="/register"
+                    path={ROUTES.REGISTER}
                     render={props => <RegisterPage {...props} />}
                   />
                   <Route
-                    path="/login"
+                    path={ROUTES.LOGIN}
                     render={props => <LoginPage {...props} />}
                   />
-                  <Route path="/unauthorized" component={UnauthorizedPage} />
                   <Route
-                    path="/emailConfirmed"
+                    path={ROUTES.UNAUTHORIZED}
+                    component={UnauthorizedPage}
+                  />
+                  <Route
+                    path={ROUTES.EMAIL_CONFIRMED}
                     component={EmailConfirmedPage}
                   />
-                  <PrivateRoute path="/collection" component={CollectionPage} />
+                  <Route
+                    path={ROUTES.FORGOT_PASSWORD}
+                    component={ForgotPasswordPage}
+                  />
+                  <PrivateRoute
+                    path={ROUTES.COLLECTION}
+                    component={CollectionPage}
+                  />
                 </Switch>
               </Suspense>
             </Layout>
