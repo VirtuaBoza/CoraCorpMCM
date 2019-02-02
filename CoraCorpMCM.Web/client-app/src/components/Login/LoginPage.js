@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
+import Isemail from 'isemail';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
@@ -9,11 +10,10 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-import Isemail from 'isemail';
-
+import ForgotPasswordPage from './ForgotPasswordPage';
 import ROUTES from '../../constants/routeConstants';
 import AuthContext from '../../AuthContext';
-import login from '../../services/loginService';
+import authenticationService from '../../services/authenticationService';
 
 const styles = theme => ({
   formContainer: {
@@ -55,6 +55,7 @@ const LoginPage = ({ location, history, classes }) => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [formErrors, setFormErrors] = useState({ email: '', password: '' });
   const [loginFailed, setLoginFailed] = useState(false);
+  const [forgotPassword, setForgotPassword] = useState(false);
 
   const handleInputChanged = e => {
     const { name, value } = e.target;
@@ -70,7 +71,8 @@ const LoginPage = ({ location, history, classes }) => {
   const handleSubmitClicked = e => {
     e.preventDefault();
     setLoginFailed(false);
-    login(credentials)
+    authenticationService
+      .login(credentials)
       .then(json => {
         auth.storeToken(json.token);
         if (location.state && location.state.referrer) {
@@ -88,10 +90,10 @@ const LoginPage = ({ location, history, classes }) => {
   const validateField = e => {
     const { name, value, required } = e.target;
 
-    if (required) {
+    if (required && /^ *$/.test(value)) {
       setFormErrors({
         ...formErrors,
-        [name]: /^ *$/.test(value) ? 'This field is required.' : '',
+        [name]: 'This field is required.',
       });
     } else {
       switch (name) {
@@ -104,6 +106,10 @@ const LoginPage = ({ location, history, classes }) => {
           });
           break;
         default:
+          setFormErrors({
+            ...formErrors,
+            [name]: '',
+          });
       }
     }
   };
@@ -121,7 +127,20 @@ const LoginPage = ({ location, history, classes }) => {
     return noFormErrors && requiredFieldsArePopulated;
   };
 
-  return (
+  const handleForgotPasswordClicked = () => {
+    authenticationService
+      .forgotPassword(credentials.email)
+      .then(() => {
+        setForgotPassword(true);
+      })
+      .catch(error => {
+        setFormErrors({ ...formErrors, email: error });
+      });
+  };
+
+  return forgotPassword ? (
+    <ForgotPasswordPage />
+  ) : (
     <Paper className={classes.formContainer}>
       <Avatar className={classes.avatar}>
         <LockOutlinedIcon />
@@ -140,7 +159,7 @@ const LoginPage = ({ location, history, classes }) => {
           helperText={formErrors.email || ' '}
           error={Boolean(formErrors.email)}
           margin="normal"
-          autoComplete="work email"
+          autoComplete="email"
           variant="outlined"
           autoFocus
           fullWidth
@@ -181,8 +200,9 @@ const LoginPage = ({ location, history, classes }) => {
         variant="text"
         size="small"
         color="primary"
-        onClick={() => history.push(ROUTES.FORGOT_PASSWORD)}
+        onClick={handleForgotPasswordClicked}
         className={classes.forgotPasswordButton}
+        disabled={!Boolean(credentials.email) || Boolean(formErrors.email)}
       >
         Forgot Password
       </Button>

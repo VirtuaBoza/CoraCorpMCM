@@ -76,10 +76,10 @@ const RegisterPage = ({ classes }) => {
 
   const validateField = e => {
     const { name, value, required } = e.target;
-    if (required) {
+    if (required && /^ *$/.test(value)) {
       setFormErrors({
         ...formErrors,
-        [name]: /^ *$/.test(value) ? 'This field is required.' : '',
+        [name]: 'This field is required.',
       });
     } else {
       switch (name) {
@@ -117,6 +117,10 @@ const RegisterPage = ({ classes }) => {
           });
           break;
         default:
+          setFormErrors({
+            ...formErrors,
+            [name]: '',
+          });
       }
     }
   };

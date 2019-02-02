@@ -8,6 +8,7 @@ const EmailConfirmedPage = props => {
   const token = new URLSearchParams(props.location.search).get('t');
   if (token) {
     auth.storeToken(token);
+    return <div>Email confirmed</div>; //TODO: Enhance
   }
 
   if (auth.isAuthenticated()) return <Redirect to="/" />;

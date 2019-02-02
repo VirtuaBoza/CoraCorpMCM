@@ -14,9 +14,10 @@ import WelcomePage from './components/Index/WelcomePage';
 import CollectionPage from './components/Collection/CollectionPage';
 import UnauthorizedPage from './components/Unauthorized/UnauthorizedPage';
 import EmailConfirmedPage from './components/Register/EmailConfirmedPage';
-import PrivateRoute from './PrivateRoute';
+import PrivateRoute from './components/PrivateRoute';
 import Loading from './components/Shared/Loading';
-import ForgotPasswordPage from './components/Login/ForgotPasswordPage';
+import ResetPasswordPage from './components/Login/ResetPasswordPage';
+import NotFoundPage from './components/NotFound/NotFoundPage';
 
 const LoginPage = lazy(() => import('./components/Login/LoginPage'));
 const RegisterPage = lazy(() => import('./components/Register/RegisterPage'));
@@ -90,13 +91,15 @@ class App extends Component {
                     component={EmailConfirmedPage}
                   />
                   <Route
-                    path={ROUTES.FORGOT_PASSWORD}
-                    component={ForgotPasswordPage}
+                    path={ROUTES.RESET_PASSWORD}
+                    component={ResetPasswordPage}
                   />
                   <PrivateRoute
                     path={ROUTES.COLLECTION}
                     component={CollectionPage}
                   />
+                  {/** TODO: Enhance */}
+                  <Route component={NotFoundPage} />
                 </Switch>
               </Suspense>
             </Layout>
