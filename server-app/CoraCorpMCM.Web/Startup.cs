@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using AutoMapper;
 using CoraCorpMCM.App.Account.Entities;
 using CoraCorpMCM.App.Account.Interfaces.Repositories;
 using CoraCorpMCM.App.Account.Interfaces.Services;
@@ -8,6 +9,7 @@ using CoraCorpMCM.App.Shared.Interfaces;
 using CoraCorpMCM.App.Shared.Interfaces.Services;
 using CoraCorpMCM.Data;
 using CoraCorpMCM.Data.Repositories;
+using CoraCorpMCM.Services;
 using CoraCorpMCM.Services.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -84,12 +86,14 @@ namespace CoraCorpMCM.Web
       services.AddScoped<IMuseumRepository, MuseumRepository>();
       services.AddScoped<IMuseumRegistrationService, MuseumRegistrationService>();
       services.AddScoped<IIdentityTokenService, IdentityTokenService>();
-      services.AddTransient<IEmailConfirmationService, EmailConfirmationService>();
-      services.AddSingleton<IEmailSender, EmailSender>();
+
+
+      services.AddScoped<IEmailConfirmationService, EmailConfirmationService>();
+      services.AddScoped<IEmailSender, EmailSender>();
       services.Configure<AuthMessageSenderOptions>(Configuration);
 
       services.AddTransient<DbInitializer>();
-
+      services.AddAutoMapper();
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
       // In production, the React files will be served from this directory

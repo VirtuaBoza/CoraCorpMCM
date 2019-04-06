@@ -17,19 +17,48 @@ namespace CoraCorpMCM.Data.Repositories
       this.context = context;
     }
 
-    public void Add(T entity)
+    public void Add(T entity, Guid museumId)
     {
+      entity.MuseumId = museumId;
       context.Set<T>().Add(entity);
+    }
+
+    public async Task DeleteAsync(TId id, Guid museumId)
+    {
+      var storedEntity = await GetAsync(id);
+      if (storedEntity == null || storedEntity.MuseumId != museumId)
+      {
+        throw new Exception();
+      }
+
+      context.Set<T>().Remove(storedEntity);
     }
 
     public async Task<IEnumerable<T>> GetAllAsync(Guid museumId)
     {
-      return await context.Set<T>().Where(x => x.MuseumId == museumId).ToListAsync();
+      return await context.Set<T>()
+        .Where(x => x.MuseumId == museumId)
+        .AsNoTracking()
+        .ToListAsync();
     }
 
     public async Task<T> GetAsync(TId id)
     {
-      return await context.Set<T>().FindAsync(id);
+      return await context.Set<T>()
+        .AsNoTracking()
+        .SingleOrDefaultAsync(entity => entity.Id.Equals(id));
+    }
+
+    public async Task UpdateAsync(T entity, Guid museumId)
+    {
+      var storedEntity = await GetAsync(entity.Id);
+      if (storedEntity == null || storedEntity.MuseumId != museumId)
+      {
+        throw new Exception();
+      }
+
+      entity.MuseumId = museumId;
+      context.Set<T>().Update(entity);
     }
   }
 }

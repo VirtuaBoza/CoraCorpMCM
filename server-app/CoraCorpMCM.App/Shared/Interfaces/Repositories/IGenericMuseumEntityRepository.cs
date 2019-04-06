@@ -9,6 +9,8 @@ namespace CoraCorpMCM.App.Shared.Interfaces.Repositories
   {
     Task<IEnumerable<T>> GetAllAsync(Guid museumId);
     Task<T> GetAsync(TId id);
-    void Add(T entity);
+    void Add(T entity, Guid museumId);
+    Task UpdateAsync(T entity, Guid museumId);
+    Task DeleteAsync(TId id, Guid museumId);
   }
 }

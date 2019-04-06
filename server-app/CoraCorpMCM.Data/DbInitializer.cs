@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using CoraCorpMCM.App.Account.Constants;
 using CoraCorpMCM.App.Account.Entities;
 using CoraCorpMCM.App.Collection.Entities;
 using CoraCorpMCM.App.Shared.Entities;
@@ -10,10 +11,6 @@ namespace CoraCorpMCM.Data
 {
   public class DbInitializer
   {
-    const string DIRECTOR = "Director";
-    const string ADMINISTRATOR = "Administrator";
-    const string CONTRIBUTOR = "Contributor";
-
     private readonly ApplicationDbContext context;
     private readonly UserManager<ApplicationUser> userManager;
     private readonly RoleManager<IdentityRole> roleManager;
@@ -40,13 +37,13 @@ namespace CoraCorpMCM.Data
     private async Task CreateRoles()
     {
 
-      var directorRole = new IdentityRole(DIRECTOR);
+      var directorRole = new IdentityRole(Roles.DIRECTOR);
       await roleManager.CreateAsync(directorRole);
 
-      var administratorRole = new IdentityRole(ADMINISTRATOR);
+      var administratorRole = new IdentityRole(Roles.ADMINISTRATOR);
       await roleManager.CreateAsync(administratorRole);
 
-      var contributorRole = new IdentityRole(CONTRIBUTOR);
+      var contributorRole = new IdentityRole(Roles.CONTRIBUTOR);
       await roleManager.CreateAsync(contributorRole);
     }
 
@@ -87,9 +84,9 @@ namespace CoraCorpMCM.Data
 
     private async Task CreateSampleUsers(Museum museum)
     {
-      await CreateSampleUser("Madam", "Director", museum, DIRECTOR);
-      await CreateSampleUser("Mister", "Administrator", museum, ADMINISTRATOR);
-      await CreateSampleUser("Guy", "Contributor", museum, CONTRIBUTOR);
+      await CreateSampleUser("Madam", "Director", museum, Roles.DIRECTOR);
+      await CreateSampleUser("Mister", "Administrator", museum, Roles.ADMINISTRATOR);
+      await CreateSampleUser("Guy", "Contributor", museum, Roles.CONTRIBUTOR);
       await CreateSampleUser("Justa", "Member", museum);
     }
 
