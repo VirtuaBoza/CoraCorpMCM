@@ -87,7 +87,6 @@ namespace CoraCorpMCM.Web
       services.AddScoped<IMuseumRegistrationService, MuseumRegistrationService>();
       services.AddScoped<IIdentityTokenService, IdentityTokenService>();
 
-
       services.AddScoped<IEmailConfirmationService, EmailConfirmationService>();
       services.AddScoped<IEmailSender, EmailSender>();
       services.Configure<AuthMessageSenderOptions>(Configuration);
