@@ -10,9 +10,9 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CoraCorpMCM.Web/bin/Debug/netcoreapp2.2/CoraCorpMCM.Web.dll",
+      "program": "${workspaceFolder}/server-app/CoraCorpMCM.Web/bin/Debug/netcoreapp2.2/CoraCorpMCM.Web.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/CoraCorpMCM.Web",
+      "cwd": "${workspaceFolder}/server-app/CoraCorpMCM.Web",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart",
       "launchBrowser": {

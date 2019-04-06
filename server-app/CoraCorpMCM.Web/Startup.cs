@@ -4,6 +4,7 @@ using CoraCorpMCM.App.Account.Interfaces.Repositories;
 using CoraCorpMCM.App.Account.Interfaces.Services;
 using CoraCorpMCM.App.Account.Services;
 using CoraCorpMCM.App.Collection.Interfaces.Repositories;
+using CoraCorpMCM.App.Shared.Interfaces;
 using CoraCorpMCM.App.Shared.Interfaces.Services;
 using CoraCorpMCM.Data;
 using CoraCorpMCM.Data.Repositories;
@@ -78,6 +79,7 @@ namespace CoraCorpMCM.Web
         config.AddPolicy("EmailConfirmed", p => p.RequireClaim("email_verified", true.ToString()));
       });
 
+      services.AddScoped<IUnitOfWork, UnitOfWork>();
       services.AddScoped<IItemRepository, ItemRepository>();
       services.AddScoped<IMuseumRepository, MuseumRepository>();
       services.AddScoped<IMuseumRegistrationService, MuseumRegistrationService>();
@@ -93,7 +95,7 @@ namespace CoraCorpMCM.Web
       // In production, the React files will be served from this directory
       services.AddSpaStaticFiles(configuration =>
       {
-        configuration.RootPath = "client-app/build";
+        configuration.RootPath = "../../client-app/build";
       });
     }
 
@@ -126,7 +128,7 @@ namespace CoraCorpMCM.Web
 
       app.UseSpa(spa =>
       {
-        spa.Options.SourcePath = "client-app";
+        spa.Options.SourcePath = "../../client-app";
 
         if (env.IsDevelopment())
         {

@@ -17,9 +17,19 @@ namespace CoraCorpMCM.Data.Repositories
       this.context = context;
     }
 
+    public void Add(T entity)
+    {
+      context.Set<T>().Add(entity);
+    }
+
     public async Task<IEnumerable<T>> GetAllAsync(Guid museumId)
     {
       return await context.Set<T>().Where(x => x.MuseumId == museumId).ToListAsync();
+    }
+
+    public async Task<T> GetAsync(TId id)
+    {
+      return await context.Set<T>().FindAsync(id);
     }
   }
 }

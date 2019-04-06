@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using CoraCorpMCM.App.Account.Constants;
 using CoraCorpMCM.App.Account.Entities;
 using CoraCorpMCM.App.Account.Interfaces.Repositories;
 using CoraCorpMCM.App.Account.Interfaces.Services;
@@ -45,9 +46,9 @@ namespace CoraCorpMCM.App.Account.Services
       {
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         new Claim(JwtRegisteredClaimNames.Email, user.Email),
-        new Claim("name", user.UserName),
-        new Claim("museum_id", user.MuseumId.ToString()),
-        new Claim("museum_name", user.Museum.Name),
+        new Claim(AppClaimTypes.NAME, user.UserName),
+        new Claim(AppClaimTypes.MUSEUM_ID, user.MuseumId.ToString()),
+        new Claim(AppClaimTypes.MUSEUM_NAME, user.Museum.Name),
       };
       var roles = await userManager.GetRolesAsync(user);
       claims.AddRange(roles.Select(claim => new Claim("roles", claim)));

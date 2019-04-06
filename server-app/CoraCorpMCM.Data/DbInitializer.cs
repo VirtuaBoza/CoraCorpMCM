@@ -101,10 +101,10 @@ namespace CoraCorpMCM.Data
     {
       var user = new ApplicationUser
       {
-      UserName = $"{firstName} {lastName}",
-      Email = $"{firstName}.{lastName}@museum.com",
-      EmailConfirmed = true,
-      Museum = museum,
+        UserName = $"{firstName} {lastName}",
+        Email = $"{firstName}.{lastName}@museum.com",
+        EmailConfirmed = true,
+        Museum = museum,
       };
 
       var userResult = await userManager.CreateAsync(user, "password");
