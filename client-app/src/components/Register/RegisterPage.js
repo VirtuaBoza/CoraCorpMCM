@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Isemail from 'isemail';
+import isEmail from 'validator/lib/isEmail';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
@@ -86,9 +86,7 @@ const RegisterPage = ({ classes }) => {
         case 'email':
           setFormErrors({
             ...formErrors,
-            email: Isemail.validate(value)
-              ? ''
-              : 'Please enter a valid email address.',
+            email: isEmail(value) ? '' : 'Please enter a valid email address.',
           });
           break;
         case 'password':

@@ -11,6 +11,7 @@ using CoraCorpMCM.Data;
 using CoraCorpMCM.Data.Repositories;
 using CoraCorpMCM.Services;
 using CoraCorpMCM.Services.Email;
+using CoraCorpMCM.Web.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -92,7 +93,11 @@ namespace CoraCorpMCM.Web
       services.Configure<AuthMessageSenderOptions>(Configuration);
 
       services.AddTransient<DbInitializer>();
+
       services.AddAutoMapper();
+
+      services.AddSignalR();
+
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
       // In production, the React files will be served from this directory
@@ -120,6 +125,10 @@ namespace CoraCorpMCM.Web
       app.UseSpaStaticFiles();
 
       app.UseAuthentication();
+
+      app.UseSignalR(routes => {
+        routes.MapHub<MuseumHub>("/museumHub");
+      });
 
       app.UseMvc(routes =>
       {

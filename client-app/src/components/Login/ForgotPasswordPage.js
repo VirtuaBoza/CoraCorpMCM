@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-import AuthContext from '../../AuthContext';
+import * as auth from '../../utilities/auth';
 import ROUTES from '../../constants/routeConstants';
 
 const styles = theme => ({
@@ -23,7 +23,6 @@ const styles = theme => ({
 });
 
 const ForgotPasswordPage = ({ classes }) => {
-  const auth = useContext(AuthContext);
   if (auth.isAuthenticated()) return <Redirect to={ROUTES.HOME} />;
 
   return (

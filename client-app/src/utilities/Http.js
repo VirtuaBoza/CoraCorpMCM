@@ -1,3 +1,5 @@
+import * as auth from './auth';
+
 const handleResponse = async response => {
   const contentType = response.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
@@ -17,7 +19,7 @@ const handleResponse = async response => {
 
 const handleRejection = error => console.error(error);
 
-const configureOptions = (auth, verb, payload) => {
+const configureOptions = (verb, payload) => {
   let options = {
     method: verb || 'GET',
     headers: { 'Content-Type': 'application/json' },
@@ -27,7 +29,7 @@ const configureOptions = (auth, verb, payload) => {
     options = { ...options, body: JSON.stringify(payload) };
   }
 
-  const token = auth && auth.getIdToken();
+  const token = auth.getIdToken();
   if (token) {
     options = {
       ...options,
@@ -43,23 +45,17 @@ const makeRequest = (url, options) => {
     .then(handleResponse);
 };
 
-export default class Http {
-  constructor(auth) {
-    this.auth = auth;
-  }
+export const get = url => {
+  const options = configureOptions();
+  return makeRequest(url, options);
+};
 
-  get = url => {
-    const options = configureOptions(this.auth);
-    return makeRequest(url, options);
-  };
+export const post = (url, payload) => {
+  const options = configureOptions('POST', payload);
+  return makeRequest(url, options);
+};
 
-  post = (url, payload) => {
-    const options = configureOptions(this.auth, 'POST', payload);
-    return makeRequest(url, options);
-  };
-
-  put = (url, payload) => {
-    const options = configureOptions(this.auth, 'PUT', payload);
-    return makeRequest(url, options);
-  };
-}
+export const put = (url, payload) => {
+  const options = configureOptions('PUT', payload);
+  return makeRequest(url, options);
+};

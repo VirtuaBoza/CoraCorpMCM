@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -17,7 +17,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Divider from '@material-ui/core/Divider';
 
-import AuthContext from '../AuthContext';
+import * as auth from '../utilities/auth';
 import ROUTES from '../constants/routeConstants';
 
 const styles = theme => ({
@@ -41,12 +41,14 @@ const styles = theme => ({
   topDrawer: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+  },
+  home: {
+    'flex-grow': 1,
   },
 });
 
 const TopNav = ({ history, classes }) => {
-  const auth = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -80,15 +82,29 @@ const TopNav = ({ history, classes }) => {
               >
                 <div className={classes.list}>
                   <div className={classes.topDrawer}>
+                    <div className={classes.home}>
+                      <List>
+                        <ListItem button>
+                          <ListItemText
+                            primary="Home"
+                            onClick={() => history.push(ROUTES.HOME)}
+                          />
+                        </ListItem>
+                      </List>
+                    </div>
+
                     <IconButton onClick={() => setDrawerOpen(false)}>
                       <ChevronLeftIcon />
                     </IconButton>
                   </div>
                   <Divider />
                   <List>
-                    {[].map((text, index) => (
+                    {['Collection'].map(text => (
                       <ListItem button key={text}>
-                        <ListItemText primary={text} />
+                        <ListItemText
+                          primary={text}
+                          onClick={() => history.push(ROUTES.COLLECTION)}
+                        />
                       </ListItem>
                     ))}
                   </List>
@@ -125,6 +141,7 @@ const TopNav = ({ history, classes }) => {
                 onClick={() => {
                   handleClose();
                   auth.logout();
+                  history.push(ROUTES.HOME);
                 }}
               >
                 Logout

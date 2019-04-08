@@ -6,5 +6,6 @@ namespace CoraCorpMCM.Web.Areas.Collection.Models
     {
         public Guid? Id { get; set; }
         public string Title { get; set; }
+        public string ConcurrencyStamp { get; set; }
     }
 }

@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import Isemail from 'isemail';
+import isEmail from 'validator/lib/isEmail';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
@@ -12,8 +12,8 @@ import Button from '@material-ui/core/Button';
 
 import ForgotPasswordPage from './ForgotPasswordPage';
 import ROUTES from '../../constants/routeConstants';
-import AuthContext from '../../AuthContext';
 import authenticationService from '../../services/authenticationService';
+import * as auth from '../../utilities/auth';
 
 const styles = theme => ({
   formContainer: {
@@ -49,7 +49,6 @@ const styles = theme => ({
 });
 
 const LoginPage = ({ location, history, classes }) => {
-  const auth = useContext(AuthContext);
   if (auth.isAuthenticated()) return <Redirect to={ROUTES.HOME} />;
 
   const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -74,7 +73,7 @@ const LoginPage = ({ location, history, classes }) => {
     authenticationService
       .login(credentials)
       .then(json => {
-        auth.storeToken(json.token);
+        auth.handleAuthentication(json.token);
         if (location.state && location.state.referrer) {
           history.push(location.state.referrer);
         } else {
@@ -100,9 +99,7 @@ const LoginPage = ({ location, history, classes }) => {
         case 'email':
           setFormErrors({
             ...formErrors,
-            email: Isemail.validate(value)
-              ? ''
-              : 'Please enter a valid email address.',
+            email: isEmail(value) ? '' : 'Please enter a valid email address.',
           });
           break;
         default:

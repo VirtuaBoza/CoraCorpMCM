@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import Isemail from 'isemail';
+import isEmail from 'validator/lib/isEmail';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-import AuthContext from '../../AuthContext';
+import * as auth from '../../utilities/auth';
 import authenticationService from '../../services/authenticationService';
 import ROUTES from '../../constants/routeConstants';
 
@@ -46,7 +46,6 @@ const styles = theme => ({
 });
 
 const ResetPasswordPage = ({ classes, location, history }) => {
-  const auth = useContext(AuthContext);
   const code = new URLSearchParams(location.search).get('c').replace(/ /g, '+');
   if (auth.isAuthenticated() || !code) return <Redirect to="/" />;
 
@@ -88,9 +87,7 @@ const ResetPasswordPage = ({ classes, location, history }) => {
         case 'email':
           setFormErrors({
             ...formErrors,
-            email: Isemail.validate(value)
-              ? ''
-              : 'Please enter a valid email address.',
+            email: isEmail(value) ? '' : 'Please enter a valid email address.',
           });
           break;
         case 'password':

@@ -11,6 +11,7 @@ namespace CoraCorpMCM.Web.Extensions
     {
       var museumIdClaimValue = user.Claims.ToList()
         .Find(c => c.Type == AppClaimTypes.MUSEUM_ID)?.Value;
+        
       return new Guid(museumIdClaimValue);
     }
   }

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoraCorpMCM.Data", "CoraCor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoraCorpMCM.Services", "CoraCorpMCM.Services\CoraCorpMCM.Services.csproj", "{B038C9DF-C39A-4649-A59A-C71E7ED97C09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoraCorpMCM.Web.UnitTests", "CoraCorpMCM.Web.UnitTests\CoraCorpMCM.Web.UnitTests.csproj", "{C2D9BF16-5BE6-4524-AFFE-F8C3A4DA53E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B038C9DF-C39A-4649-A59A-C71E7ED97C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B038C9DF-C39A-4649-A59A-C71E7ED97C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B038C9DF-C39A-4649-A59A-C71E7ED97C09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2D9BF16-5BE6-4524-AFFE-F8C3A4DA53E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2D9BF16-5BE6-4524-AFFE-F8C3A4DA53E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2D9BF16-5BE6-4524-AFFE-F8C3A4DA53E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2D9BF16-5BE6-4524-AFFE-F8C3A4DA53E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

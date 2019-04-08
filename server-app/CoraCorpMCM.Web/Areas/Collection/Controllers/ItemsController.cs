@@ -9,8 +9,10 @@ using CoraCorpMCM.App.Collection.Interfaces.Repositories;
 using CoraCorpMCM.App.Shared.Interfaces;
 using CoraCorpMCM.Web.Areas.Collection.Models;
 using CoraCorpMCM.Web.Extensions;
+using CoraCorpMCM.Web.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CoraCorpMCM.Web.Areas.Collection.Controllers
 {
@@ -23,9 +25,11 @@ namespace CoraCorpMCM.Web.Areas.Collection.Controllers
     private readonly IItemRepository itemRepository;
     private readonly IUnitOfWork unitOfWork;
     private readonly IMapper mapper;
+    private readonly IHubContext<MuseumHub> hubContext;
 
-    public ItemsController(IItemRepository itemRepository, IUnitOfWork unitOfWork, IMapper mapper)
+    public ItemsController(IItemRepository itemRepository, IUnitOfWork unitOfWork, IMapper mapper, IHubContext<MuseumHub> hubContext)
     {
+      this.hubContext = hubContext;
       this.itemRepository = itemRepository;
       this.unitOfWork = unitOfWork;
       this.mapper = mapper;
@@ -39,10 +43,10 @@ namespace CoraCorpMCM.Web.Areas.Collection.Controllers
       return Ok(mapper.Map<IEnumerable<ItemViewModel>>(items));
     }
 
-    [HttpGet("{id}", Name = "Get")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> Get(Guid id)
     {
-      var item = await itemRepository.GetAsync(id);
+      var item = await itemRepository.GetAsync(id, User.GetMuseumId());
       if (item == null)
       {
         return NotFound();
@@ -72,10 +76,12 @@ namespace CoraCorpMCM.Web.Areas.Collection.Controllers
       }
 
       var item = mapper.Map<Item>(itemViewModel);
-      await itemRepository.UpdateAsync(item, User.GetMuseumId());
+      var updatedItem = await itemRepository.UpdateAsync(item, User.GetMuseumId());
       await unitOfWork.SaveChangesAsync();
+      var updatedItemViewModel = mapper.Map<ItemViewModel>(updatedItem);
+      await hubContext.Clients.Group(item.MuseumId.ToString()).SendAsync("ItemUpdated", updatedItemViewModel);
 
-      return Ok();
+      return Ok(updatedItemViewModel);
     }
 
     [HttpDelete("{id}")]

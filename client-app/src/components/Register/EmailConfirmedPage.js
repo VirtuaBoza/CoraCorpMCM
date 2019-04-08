@@ -1,13 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Redirect } from 'react-router-dom';
-import AuthContext from '../../AuthContext';
+
+import * as auth from '../../utilities/auth';
 
 const EmailConfirmedPage = props => {
-  const auth = useContext(AuthContext);
-
   const token = new URLSearchParams(props.location.search).get('t');
   if (token) {
-    auth.storeToken(token);
+    auth.handleAuthentication(token);
     return <div>Email confirmed</div>; //TODO: Enhance
   }
 

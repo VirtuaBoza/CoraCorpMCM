@@ -1,17 +1,14 @@
-import Http from '../utilities/Http';
+import { post } from '../utilities/http';
 
 const authenticationService = {
   login: ({ email, password }) => {
-    const http = new Http();
-    return http.post('/api/account/authentication/login', { email, password });
+    return post('/api/account/authentication/login', { email, password });
   },
   forgotPassword: email => {
-    const http = new Http();
-    return http.post('/api/account/authentication/forgotPassword', email);
+    return post('/api/account/authentication/forgotPassword', email);
   },
   changePassword: ({ email, password, confirmPassword, code }) => {
-    const http = new Http();
-    return http.post('/api/account/authentication/changePassword', {
+    return post('/api/account/authentication/changePassword', {
       email,
       password,
       confirmPassword,

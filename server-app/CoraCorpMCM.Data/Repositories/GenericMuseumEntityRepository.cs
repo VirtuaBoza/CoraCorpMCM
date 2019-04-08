@@ -10,7 +10,7 @@ namespace CoraCorpMCM.Data.Repositories
 {
   public class GenericMuseumEntityRepository<T, TId> : IGenericMuseumEntityRepository<T, TId> where T : class, IMuseumEntity<TId>
   {
-    private readonly ApplicationDbContext context;
+    protected readonly ApplicationDbContext context;
 
     public GenericMuseumEntityRepository(ApplicationDbContext context)
     {
@@ -25,7 +25,7 @@ namespace CoraCorpMCM.Data.Repositories
 
     public async Task DeleteAsync(TId id, Guid museumId)
     {
-      var storedEntity = await GetAsync(id);
+      var storedEntity = await GetAsync(id, museumId);
       if (storedEntity == null || storedEntity.MuseumId != museumId)
       {
         throw new Exception();
@@ -42,16 +42,17 @@ namespace CoraCorpMCM.Data.Repositories
         .ToListAsync();
     }
 
-    public async Task<T> GetAsync(TId id)
+    public async Task<T> GetAsync(TId id, Guid museumId)
     {
       return await context.Set<T>()
+        .Where(x => x.MuseumId == museumId)
         .AsNoTracking()
         .SingleOrDefaultAsync(entity => entity.Id.Equals(id));
     }
 
-    public async Task UpdateAsync(T entity, Guid museumId)
+    public async virtual Task<T> UpdateAsync(T entity, Guid museumId)
     {
-      var storedEntity = await GetAsync(entity.Id);
+      var storedEntity = await GetAsync(entity.Id, museumId);
       if (storedEntity == null || storedEntity.MuseumId != museumId)
       {
         throw new Exception();
@@ -59,6 +60,7 @@ namespace CoraCorpMCM.Data.Repositories
 
       entity.MuseumId = museumId;
       context.Set<T>().Update(entity);
+      return entity;
     }
   }
 }

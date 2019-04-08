@@ -1,17 +1,16 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import AuthContext from '../AuthContext';
+import * as auth from '../utilities/auth';
 
-const PrivateRoute = ({ component: Component, role, ...rest }) => {
-  const auth = useContext(AuthContext);
+const PrivateRoute = ({ component: Component, roles, ...rest }) => {
   return (
     <Route
       {...rest}
       render={props => {
         if (!auth.isAuthenticated()) return <Redirect to="/login" />;
 
-        if (role && !auth.userInRole(role))
+        if (roles && !auth.userInRole(roles))
           return <Redirect to="/unauthorized" />;
 
         return <Component auth={auth} {...props} />;
@@ -22,7 +21,7 @@ const PrivateRoute = ({ component: Component, role, ...rest }) => {
 
 PrivateRoute.propTypes = {
   component: PropTypes.func.isRequired,
-  role: PropTypes.string,
+  roles: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default PrivateRoute;

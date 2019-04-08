@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import AuthContext from '../../AuthContext';
+import * as auth from '../../utilities/auth';
 
 const styles = theme => ({
   container: {
@@ -12,8 +12,6 @@ const styles = theme => ({
 });
 
 const DashboardPage = ({ classes }) => {
-  const auth = useContext(AuthContext);
-
   return (
     <div className={classes.container}>
       <Typography
