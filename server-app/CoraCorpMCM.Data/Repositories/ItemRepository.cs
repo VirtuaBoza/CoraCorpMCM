@@ -11,8 +11,17 @@ namespace CoraCorpMCM.Data.Repositories
 
     public async override Task<Item> UpdateAsync(Item entity, Guid museumId)
     {
-      await base.UpdateAsync(entity, museumId);
+      var storedEntity = await GetAsync(entity.Id, museumId);
+      if (storedEntity == null 
+        || storedEntity.MuseumId != museumId
+        || entity.ConcurrencyStamp != storedEntity.ConcurrencyStamp)
+      {
+        throw new Exception();
+      }
+
+      entity.MuseumId = museumId;
       entity.ConcurrencyStamp = Guid.NewGuid().ToString();
+      context.Items.Update(entity);
       return entity;
     }
   }
